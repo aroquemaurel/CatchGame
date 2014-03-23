@@ -13,6 +13,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -31,10 +32,15 @@ public class CatchGameView extends View {
 	int endEcran = 630; //sur ma tablette
 	int timerCount = 0;
 	int gameField = 300;
+	int appearSpeed = 5;
+	float pressedPositionX = -1;
+	float pressedPositionY = -1;
+	
 	List<Fruit> fruitList;
 	List<Rect> fallingDownFruitsList = new ArrayList<Rect>();
 
 	Bitmap applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
+	//Bitmap panier = BitmapFactory.decodeResource(getResources(),R.drawable.panier);
 	Bitmap applePict2 = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
 	int fruitFallDelay = 1000;
 	Timer timerFallingFruits;
@@ -61,10 +67,10 @@ public class CatchGameView extends View {
 			@Override
 			public void run() {
 				timerEventHandler();
-				if (timerCount%15 == 0){
+				if (timerCount%appearSpeed == 0){
 					Random rand = new Random();
 					int coord1 = rand.nextInt(gameField);
-					fallingDownFruitsList.add(new Rect(0, coord1, CatchGameActivity.fruitRadius*2, CatchGameActivity.fruitRadius*2));
+					fallingDownFruitsList.add(new Rect(0, coord1, 0+CatchGameActivity.fruitRadius*2, coord1+CatchGameActivity.fruitRadius*2));
 				}
 				Rect toMemorise = null;
 				for (Rect fruitBounds:fallingDownFruitsList){
@@ -73,7 +79,14 @@ public class CatchGameView extends View {
 						toMemorise = fruitBounds;
 					}
 					else{
-						fruitBounds.set(fruitBounds.left+10, fruitBounds.top, fruitBounds.right, fruitBounds.bottom);
+//						System.out.println((int)pressedPositionX+" "+(int)pressedPositionY);
+//						System.out.println(fruitBounds);
+						if (fruitBounds.contains((int)pressedPositionY,(int) pressedPositionX)){
+							toMemorise = fruitBounds;
+							CatchGameActivity.basket.addFruits();
+							//System.out.println("ok");
+						}
+						fruitBounds.set(fruitBounds.left+10, fruitBounds.top, fruitBounds.right+10, fruitBounds.bottom);
 					}
 
 				}
@@ -81,9 +94,11 @@ public class CatchGameView extends View {
 					fallingDownFruitsList.remove(toMemorise);
 				}
 				timerCount++;
-				for(Rect f: fallingDownFruitsList){
-					System.out.println(f.left);
-				}
+				pressedPositionX = -1;
+				pressedPositionY = -1;
+//				for(Rect f: fallingDownFruitsList){
+//					System.out.println(f.left);
+//				}
 
 			}
 			
@@ -108,7 +123,7 @@ public class CatchGameView extends View {
 		fallingDownFruitsList.clear();
 		for (Fruit fruit:fruitList){
 			
-			fruitBounds = new Rect(fruit.getLocationInScreen().x, fruit.getLocationInScreen().y, 2*(fruit.getRadius()), 2*(fruit.getRadius()));
+			fruitBounds = new Rect(fruit.getLocationInScreen().x, fruit.getLocationInScreen().y, fruit.getLocationInScreen().x+2*(fruit.getRadius()), fruit.getLocationInScreen().y+2*(fruit.getRadius()));
 			fallingDownFruitsList.add(fruitBounds);
 		}
 	}
@@ -118,7 +133,9 @@ public class CatchGameView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.drawColor(color.holo_green_dark);
-		
+		Paint p = new Paint();
+		canvas.drawText("Panier: " + CatchGameActivity.basket.getFruits(), CatchGameActivity.basket.getLocationInScreen().y, CatchGameActivity.basket.getLocationInScreen().x, p);
+		//canvas.drawBitmap(panier,400,10,null);
 		for (Rect fruitBounds:fallingDownFruitsList){
 			canvas.drawBitmap(applePict, fruitBounds.top, fruitBounds.left,null);
 		}
@@ -126,17 +143,19 @@ public class CatchGameView extends View {
 		
 	}
 	
-//	@Override
-//	public boolean onTouchEvent(MotionEvent e) {
-//		boolean pressed;
-//		switch (e.getAction()){
-//        case MotionEvent.ACTION_DOWN:
-//            pressed = true;
-//        break;
-//	    float x = e.getX();
-//	    float y = e.getY();
-//	    return pressed;
-//	}
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+		boolean pressed = false;
+		switch (e.getAction()){
+        case MotionEvent.ACTION_DOWN:
+            pressed = true;
+        break;
+		}
+	    pressedPositionX = e.getX();
+	    pressedPositionY = e.getY();
+	   // System.out.println(pressedPositionX+" "+pressedPositionY);
+	    return pressed;
+	}
 
 
 }

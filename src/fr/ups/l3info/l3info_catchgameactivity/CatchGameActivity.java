@@ -1,6 +1,7 @@
 package fr.ups.l3info.l3info_catchgameactivity;
 
 import fr.ups.l3info.l3info_catchgamedatastructure.Fruit;
+import fr.ups.l3info.l3info_catchgamedatastructure.FruitBasket;
 import fr.ups.l3info.l3info_catchgametemplate.R;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import java.util.TimerTask;
 public class CatchGameActivity extends Activity {
 	Timer t = new Timer();
 	List<Fruit> fruitList;
+	static FruitBasket basket;
 	CatchGameView fruitView;
 	Button bStart;
 	Button bStop;
@@ -35,6 +37,7 @@ public class CatchGameActivity extends Activity {
 	int init2 = 255;
 	final int FPS = 40;
 	static int fruitRadius = 22;
+	Point basketLocation = new Point (10,400);
 
 	//TimerTask updateBall = new UpdateBallTask();
 
@@ -43,6 +46,7 @@ public class CatchGameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_catch_game);
+		basket = new FruitBasket(basketLocation);
 		fruitView = (CatchGameView)findViewById(R.id.l3InfoCatchGameView1);
 		bStart = (Button)findViewById(R.id.buttonStart);
 		bStop = (Button)findViewById(R.id.buttonStop);
