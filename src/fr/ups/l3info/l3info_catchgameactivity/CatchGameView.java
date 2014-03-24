@@ -35,6 +35,8 @@ public class CatchGameView extends View {
 	int appearSpeed = 5;
 	float pressedPositionX = -1;
 	float pressedPositionY = -1;
+	int gameOver = 0;
+	int fruitLimit = 1;//fruits can fall without being picked up
 	
 	List<Fruit> fruitList;
 	List<Rect> fallingDownFruitsList = new ArrayList<Rect>();
@@ -77,6 +79,7 @@ public class CatchGameView extends View {
 					if(fruitBounds.left >= endEcran){
 						//fruitBounds.set(0, fruitBounds.top, fruitBounds.right, fruitBounds.bottom);
 						toMemorise = fruitBounds;
+						gameOver++;
 					}
 					else{
 //						System.out.println((int)pressedPositionX+" "+(int)pressedPositionY);
@@ -134,11 +137,16 @@ public class CatchGameView extends View {
 		super.onDraw(canvas);
 		canvas.drawColor(color.holo_green_dark);
 		Paint p = new Paint();
-		canvas.drawText("Panier: " + CatchGameActivity.basket.getFruits(), CatchGameActivity.basket.getLocationInScreen().y, CatchGameActivity.basket.getLocationInScreen().x, p);
-		//canvas.drawBitmap(panier,400,10,null);
-		for (Rect fruitBounds:fallingDownFruitsList){
-			canvas.drawBitmap(applePict, fruitBounds.top, fruitBounds.left,null);
-		}
+		if(gameOver >= fruitLimit){
+			stopTimer();
+			canvas.drawText("Le jeu est terminé, vous avez: " + CatchGameActivity.basket.getFruits() +" fruits", CatchGameActivity.basket.getLocationInScreen().y, CatchGameActivity.basket.getLocationInScreen().x, p);
+		} else {
+			canvas.drawText("Panier: " + CatchGameActivity.basket.getFruits(), CatchGameActivity.basket.getLocationInScreen().y, CatchGameActivity.basket.getLocationInScreen().x, p);
+			for (Rect fruitBounds:fallingDownFruitsList){
+				canvas.drawBitmap(applePict, fruitBounds.top, fruitBounds.left,null);
+			}
+		}//canvas.drawBitmap(panier,400,10,null);
+		
 		invalidate();
 		
 	}
