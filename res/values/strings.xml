@@ -6,5 +6,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="stop">Stop</string>
     <string name="start">Start</string>
-
+	<string name="title_activity_settings">Settings</string>
+	<string name="fruitsNumber">Simultaneous fruit number</string>
+	<string name="numberOfFruits">Simultaneous fruit\'s number</string>
+	<string name="FruitSpeed">Fruit\'s fall speed</string>
+	<string name="fruitSize">Fruit\'s size</string>
+	<string name="slow">Slow</string>
+	<string name="fast">Fast</string>
 </resources>

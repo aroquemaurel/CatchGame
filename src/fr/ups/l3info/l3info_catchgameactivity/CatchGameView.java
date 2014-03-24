@@ -2,19 +2,18 @@ package fr.ups.l3info.l3info_catchgameactivity;
 
 //import java.util.ArrayList;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.R.color;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -22,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import fr.ups.l3info.l3info_catchgamedatastructure.Fruit;
 import fr.ups.l3info.l3info_catchgametemplate.R;
+import fr.ups.l3info.utils.Parameters;
 
 /* 
  * Custom view for displaying falling fruits
@@ -29,38 +29,41 @@ import fr.ups.l3info.l3info_catchgametemplate.R;
  * To be modified to implement your own version of the game
  */
 public class CatchGameView extends View {
-	int endEcran = 630; //sur ma tablette
-	int timerCount = 0;
-	int gameField = 300;
-	int appearSpeed = 5;
-	float pressedPositionX = -1;
-	float pressedPositionY = -1;
-	int gameOver = 0;
-	int fruitLimit = 1;//fruits can fall without being picked up
-	
-	List<Fruit> fruitList;
-	List<Rect> fallingDownFruitsList = new ArrayList<Rect>();
+	private int endEcran = 630; //sur ma tablette
+	private int timerCount = 0;
+	private int gameField = 300;
+	private int appearSpeed = 5;
+	private float pressedPositionX = -1;
+	private float pressedPositionY = -1;
+	private int fruitLimit = 1;//fruits can fall without being picked up
 
-	Bitmap applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
-	//Bitmap panier = BitmapFactory.decodeResource(getResources(),R.drawable.panier);
-	Bitmap applePict2 = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
-	int fruitFallDelay = 1000;
-	Timer timerFallingFruits;
-	Iterator<Rect> iter = fallingDownFruitsList.iterator();
-	
+	private List<Rect> fallingDownFruitsList;
+	private Bitmap applePict;
+
+	private int fruitFallDelay;
+
+	private Timer timerFallingFruits;
+
 	public CatchGameView(Context context) {
 		super(context);
-		fallingDownFruitsList.clear();
+		applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
+		majParameters();
+		
+		fallingDownFruitsList = new ArrayList<Rect>();
 	}
 	
 	public CatchGameView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		fallingDownFruitsList.clear();
+		applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
+		majParameters();
+		fallingDownFruitsList = new ArrayList<Rect>();
 	}
 	
 	public CatchGameView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		fallingDownFruitsList.clear();
+		applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
+		majParameters();
+		fallingDownFruitsList = new ArrayList<Rect>();
 	}
 	
 	public void initTimer(){
@@ -69,6 +72,17 @@ public class CatchGameView extends View {
 			@Override
 			public void run() {
 				timerEventHandler();
+			}
+			
+		}, 0, fruitFallDelay);
+		
+	}
+	
+	public void stopTimer(){
+		timerFallingFruits.cancel();
+	}
+	
+	private void timerEventHandler(){
 				if (timerCount%appearSpeed == 0){
 					Random rand = new Random();
 					int coord1 = rand.nextInt(gameField);
@@ -102,19 +116,6 @@ public class CatchGameView extends View {
 //				for(Rect f: fallingDownFruitsList){
 //					System.out.println(f.left);
 //				}
-
-			}
-			
-		}, 0, fruitFallDelay);
-		
-	}
-	
-	public void stopTimer(){
-		timerFallingFruits.cancel();
-	}
-	
-	private void timerEventHandler(){
-		Log.i("CatchGameView", "timer event handler");
 	}
 	
 	public void setFruitFallDelay(int delay){
@@ -137,6 +138,7 @@ public class CatchGameView extends View {
 		super.onDraw(canvas);
 		canvas.drawColor(color.holo_green_dark);
 		Paint p = new Paint();
+
 		if(gameOver >= fruitLimit){
 			stopTimer();
 			canvas.drawText("Le jeu est terminé, vous avez: " + CatchGameActivity.basket.getFruits() +" fruits", CatchGameActivity.basket.getLocationInScreen().y, CatchGameActivity.basket.getLocationInScreen().x, p);
@@ -153,17 +155,14 @@ public class CatchGameView extends View {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
-		boolean pressed = false;
-		switch (e.getAction()){
-        case MotionEvent.ACTION_DOWN:
-            pressed = true;
-        break;
-		}
 	    pressedPositionX = e.getX();
 	    pressedPositionY = e.getY();
-	   // System.out.println(pressedPositionX+" "+pressedPositionY);
-	    return pressed;
+
+	    return e.getAction() == MotionEvent.ACTION_DOWN;
 	}
 
 
+	public void majParameters() {
+		fruitFallDelay = 10*(100-Parameters.getInstance().get("fruitSpeed", 50));
+	}
 }
