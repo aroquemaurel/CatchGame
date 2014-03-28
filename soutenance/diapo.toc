@@ -1,0 +1,7 @@
+\beamer@endinputifotherversion {3.10pt}
+\select@language {french}
+\beamer@sectionintoc {1}{Le projet}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Pr\'esentation du sujet}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{Principales fonctionnalit\'es}{5}{0}{1}
+\beamer@sectionintoc {2}{Probl\`emes rencontr\'es}{8}{0}{2}
+\beamer@sectionintoc {3}{D\'emonstration}{9}{0}{3}
