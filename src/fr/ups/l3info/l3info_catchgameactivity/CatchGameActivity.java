@@ -93,7 +93,7 @@ public class CatchGameActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		// Inflate the menu; this adds items to thfe action bar if it is present.
 		getMenuInflater().inflate(R.menu.catch_game, menu);
 		return true;
 	}

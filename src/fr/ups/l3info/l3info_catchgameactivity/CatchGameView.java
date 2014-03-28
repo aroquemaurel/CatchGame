@@ -31,7 +31,6 @@ public class CatchGameView extends View {
 	private int endEcran = 630; //sur ma tablette
 	private int timerCount = 0;
 	private int gameField = 300;
-	private int appearSpeed = 5;
 	private float pressedPositionX = -1;
 	private float pressedPositionY = -1;
 	private List<Rect> fallingDownFruitsList;
@@ -74,15 +73,14 @@ public class CatchGameView extends View {
 	private void timerEventHandler() {
 		Rect toMemorise = null;
 
-		if (timerCount%appearSpeed == 0) {
+		if (timerCount % CatchGameActivity.game.getAppearSpeed() == 0) {
 			Random rand = new Random();
 			int coord1 = rand.nextInt(gameField);
 			fallingDownFruitsList.add(new Rect(0, coord1, CatchGameActivity.fruitRadius*2, 
 														coord1+CatchGameActivity.fruitRadius*2));
 		}
-		if (timerCount % 20 == 0) {
-			
-			// TODO speed
+		if (timerCount % 50 == 0) {
+			// TODO speed add
 			timerCount = 0;
 			Log.i("test", "test");
 		}
@@ -92,10 +90,11 @@ public class CatchGameView extends View {
 				CatchGameActivity.game.losingFruit();
 			} else {
 				if (fruitBounds.contains((int)pressedPositionY,(int) pressedPositionX)) {
+					Log.i("test", "rtuc");
 					toMemorise = fruitBounds;
-					CatchGameActivity.basket.addFruit();
+					//CatchGameActivity.basket.addFruit();
 				}
-				fruitBounds.set(fruitBounds.left+10, fruitBounds.top, fruitBounds.right+10, fruitBounds.bottom);
+				fruitBounds.set(fruitBounds.left+2, fruitBounds.top, fruitBounds.right+2, fruitBounds.bottom);
 			}
 	
 		}
@@ -131,12 +130,12 @@ public class CatchGameView extends View {
 		Paint p = new Paint();
 
 		if(CatchGameActivity.game != null) {
-			if(CatchGameActivity.game.lose()){
+			if(CatchGameActivity.game.lose()) {
 				stopTimer();
-				Toast.makeText((Activity)getContext(), 
-						"The game has finished, you have catched " + 
-							// TODO		CatchGameActivity.basket.getNbFruits() +
-						" fruits", Toast.LENGTH_SHORT).show();
+		//		Toast.makeText((Activity)getContext(), 
+			//			"The game has finished, you have catched " + 
+				//			// TODO		CatchGameActivity.basket.getNbFruits() +
+					//	" fruits", Toast.LENGTH_SHORT).show();
 			} else {
 			//	canvas.drawText("Basket: " + CatchGameActivity.basket.getNbFruits(), 
 			//			CatchGameActivity.basket.getLocationInScreen().y, 

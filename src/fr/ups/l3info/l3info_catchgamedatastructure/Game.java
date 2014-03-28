@@ -7,6 +7,7 @@ public class Game {
 	private int fruitLimit;//fruits can fall without being picked up
 	private int gameOver;
 	private FruitBasket fruitBasket;
+	private int appearSpeed;
 	
 	public Game() {
 		majParameters();
@@ -55,10 +56,16 @@ public class Game {
 	}
 	
 	public void majParameters() {
-		fruitFallDelay = 10*(100-Parameters.getInstance().get("fruitSpeed", 50));
+		fruitFallDelay = (100-Parameters.getInstance().get("fruitSpeed", 50))-20;
+		fruitFallDelay = (fruitFallDelay > 0) ? fruitFallDelay : 1;
+		appearSpeed = 15;
 	}
 
 	public void losingFruit() {
 		++gameOver;
+	}
+	
+	public int getAppearSpeed() {
+		return appearSpeed;
 	}
 }
