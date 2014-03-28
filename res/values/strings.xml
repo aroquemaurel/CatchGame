@@ -13,4 +13,6 @@
 	<string name="fruitSize">Fruit\'s size</string>
 	<string name="slow">Slow</string>
 	<string name="fast">Fast</string>
+	<string name="bestScore">Best score</string>
+	<string name="labelNumberOfFruits">Numbers of fruits: 0</string>
 </resources>

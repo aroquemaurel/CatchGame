@@ -1,6 +1,5 @@
 package fr.ups.l3info.l3info_catchgameactivity;
 
-//import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,9 +18,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 import fr.ups.l3info.l3info_catchgamedatastructure.Fruit;
 import fr.ups.l3info.l3info_catchgametemplate.R;
-import fr.ups.l3info.utils.Parameters;
 
 /* 
  * Custom view for displaying falling fruits
@@ -35,38 +34,29 @@ public class CatchGameView extends View {
 	private int appearSpeed = 5;
 	private float pressedPositionX = -1;
 	private float pressedPositionY = -1;
-	private int fruitLimit = 1;//fruits can fall without being picked up
-
 	private List<Rect> fallingDownFruitsList;
 	private Bitmap applePict;
-
-	private int fruitFallDelay;
-
 	private Timer timerFallingFruits;
-
+	
 	public CatchGameView(Context context) {
 		super(context);
 		applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
-		majParameters();
-		
 		fallingDownFruitsList = new ArrayList<Rect>();
 	}
 	
 	public CatchGameView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
-		majParameters();
+		applePict = BitmapFactory.decodeResource(getResources(), R.drawable.apple);
 		fallingDownFruitsList = new ArrayList<Rect>();
 	}
 	
 	public CatchGameView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
-		majParameters();
+		applePict = BitmapFactory.decodeResource(getResources(), R.drawable.apple);
 		fallingDownFruitsList = new ArrayList<Rect>();
-	}
+	}	
 	
-	public void initTimer(){
+	public void initTimer() {
 		timerFallingFruits = new Timer();
 		timerFallingFruits.schedule(new TimerTask() {			
 			@Override
@@ -74,52 +64,53 @@ public class CatchGameView extends View {
 				timerEventHandler();
 			}
 			
-		}, 0, fruitFallDelay);
-		
+		}, 0, CatchGameActivity.game.getFruitFallDelay());
 	}
 	
-	public void stopTimer(){
+	public void stopTimer() {
 		timerFallingFruits.cancel();
 	}
-	
-	private void timerEventHandler(){
-				if (timerCount%appearSpeed == 0){
-					Random rand = new Random();
-					int coord1 = rand.nextInt(gameField);
-					fallingDownFruitsList.add(new Rect(0, coord1, 0+CatchGameActivity.fruitRadius*2, coord1+CatchGameActivity.fruitRadius*2));
-				}
-				Rect toMemorise = null;
-				for (Rect fruitBounds:fallingDownFruitsList){
-					if(fruitBounds.left >= endEcran){
-						//fruitBounds.set(0, fruitBounds.top, fruitBounds.right, fruitBounds.bottom);
-						toMemorise = fruitBounds;
-						gameOver++;
-					}
-					else{
-//						System.out.println((int)pressedPositionX+" "+(int)pressedPositionY);
-//						System.out.println(fruitBounds);
-						if (fruitBounds.contains((int)pressedPositionY,(int) pressedPositionX)){
-							toMemorise = fruitBounds;
-							CatchGameActivity.basket.addFruits();
-							//System.out.println("ok");
-						}
-						fruitBounds.set(fruitBounds.left+10, fruitBounds.top, fruitBounds.right+10, fruitBounds.bottom);
-					}
+	 
+	private void timerEventHandler() {
+		Rect toMemorise = null;
 
+		if (timerCount%appearSpeed == 0) {
+			Random rand = new Random();
+			int coord1 = rand.nextInt(gameField);
+			fallingDownFruitsList.add(new Rect(0, coord1, CatchGameActivity.fruitRadius*2, 
+														coord1+CatchGameActivity.fruitRadius*2));
+		}
+		if (timerCount % 20 == 0) {
+			
+			// TODO speed
+			timerCount = 0;
+			Log.i("test", "test");
+		}
+		for (Rect fruitBounds : fallingDownFruitsList) {
+			if(fruitBounds.left >= endEcran) {
+				toMemorise = fruitBounds;
+				CatchGameActivity.game.losingFruit();
+			} else {
+				if (fruitBounds.contains((int)pressedPositionY,(int) pressedPositionX)) {
+					toMemorise = fruitBounds;
+					CatchGameActivity.basket.addFruit();
 				}
-				if (toMemorise != null){
-					fallingDownFruitsList.remove(toMemorise);
-				}
-				timerCount++;
-				pressedPositionX = -1;
-				pressedPositionY = -1;
-//				for(Rect f: fallingDownFruitsList){
-//					System.out.println(f.left);
-//				}
+				fruitBounds.set(fruitBounds.left+10, fruitBounds.top, fruitBounds.right+10, fruitBounds.bottom);
+			}
+	
+		}
+		
+		if (toMemorise != null) {
+			fallingDownFruitsList.remove(toMemorise);
+		}
+		
+		timerCount++;
+		pressedPositionX = -1;
+		pressedPositionY = -1;
 	}
 	
-	public void setFruitFallDelay(int delay){
-		fruitFallDelay = delay;
+	public void setFruitFallDelay(int delay) {
+//		fruitFallDelay = delay;
 	}
 	
 	public void setFruitList(List<Fruit> fruitList){
@@ -139,18 +130,26 @@ public class CatchGameView extends View {
 		canvas.drawColor(color.holo_green_dark);
 		Paint p = new Paint();
 
-		if(gameOver >= fruitLimit){
-			stopTimer();
-			canvas.drawText("Le jeu est terminé, vous avez: " + CatchGameActivity.basket.getFruits() +" fruits", CatchGameActivity.basket.getLocationInScreen().y, CatchGameActivity.basket.getLocationInScreen().x, p);
-		} else {
-			canvas.drawText("Panier: " + CatchGameActivity.basket.getFruits(), CatchGameActivity.basket.getLocationInScreen().y, CatchGameActivity.basket.getLocationInScreen().x, p);
-			for (Rect fruitBounds:fallingDownFruitsList){
-				canvas.drawBitmap(applePict, fruitBounds.top, fruitBounds.left,null);
+		if(CatchGameActivity.game != null) {
+			if(CatchGameActivity.game.lose()){
+				stopTimer();
+				Toast.makeText((Activity)getContext(), 
+						"The game has finished, you have catched " + 
+							// TODO		CatchGameActivity.basket.getNbFruits() +
+						" fruits", Toast.LENGTH_SHORT).show();
+			} else {
+			//	canvas.drawText("Basket: " + CatchGameActivity.basket.getNbFruits(), 
+			//			CatchGameActivity.basket.getLocationInScreen().y, 
+				//		CatchGameActivity.basket.getLocationInScreen().x, p);
+			//	CatchGameActivity.labelNbFruits.setText("Numbers of fruits: ");
+				
+				for (Rect fruitBounds:fallingDownFruitsList){
+					canvas.drawBitmap(applePict, fruitBounds.top, fruitBounds.left,null);
+				}
 			}
-		}//canvas.drawBitmap(panier,400,10,null);
+		}
 		
 		invalidate();
-		
 	}
 	
 	@Override
@@ -159,10 +158,5 @@ public class CatchGameView extends View {
 	    pressedPositionY = e.getY();
 
 	    return e.getAction() == MotionEvent.ACTION_DOWN;
-	}
-
-
-	public void majParameters() {
-		fruitFallDelay = 10*(100-Parameters.getInstance().get("fruitSpeed", 50));
 	}
 }

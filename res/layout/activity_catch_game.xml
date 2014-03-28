@@ -10,9 +10,16 @@
         android:gravity="center_horizontal|left|right"
         android:orientation="vertical" >
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bestScore"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
         <fr.ups.l3info.l3info_catchgameactivity.CatchGameView
             android:id="@+id/l3InfoCatchGameView1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="14dp" />
 
@@ -38,5 +45,14 @@
             android:layout_height="wrap_content"
             android:text="@string/start" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/labelNumberOfFruits"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
     
 </RelativeLayout>
