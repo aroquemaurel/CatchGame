@@ -58,7 +58,7 @@ public class Game {
 	public void majParameters() {
 		fruitFallDelay = (100-Parameters.getInstance().get("fruitSpeed", 50))-20;
 		fruitFallDelay = (fruitFallDelay > 0) ? fruitFallDelay : 1;
-		appearSpeed = 15;
+		appearSpeed = 20;
 	}
 
 	public void losingFruit() {

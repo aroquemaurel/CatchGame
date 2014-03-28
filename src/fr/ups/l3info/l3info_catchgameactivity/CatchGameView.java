@@ -7,7 +7,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.R.color;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,7 +17,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 import fr.ups.l3info.l3info_catchgamedatastructure.Fruit;
 import fr.ups.l3info.l3info_catchgametemplate.R;
 
@@ -92,7 +90,7 @@ public class CatchGameView extends View {
 				if (fruitBounds.contains((int)pressedPositionY,(int) pressedPositionX)) {
 					Log.i("test", "rtuc");
 					toMemorise = fruitBounds;
-					//CatchGameActivity.basket.addFruit();
+					CatchGameActivity.basket.addFruit();
 				}
 				fruitBounds.set(fruitBounds.left+2, fruitBounds.top, fruitBounds.right+2, fruitBounds.bottom);
 			}
@@ -117,7 +115,8 @@ public class CatchGameView extends View {
 		fallingDownFruitsList.clear();
 		for (Fruit fruit:fruitList){
 			
-			fruitBounds = new Rect(fruit.getLocationInScreen().x, fruit.getLocationInScreen().y, fruit.getLocationInScreen().x+2*(fruit.getRadius()), fruit.getLocationInScreen().y+2*(fruit.getRadius()));
+			fruitBounds = new Rect(fruit.getLocationInScreen().x, 
+					fruit.getLocationInScreen().y, fruit.getLocationInScreen().x+2*(fruit.getRadius()), fruit.getLocationInScreen().y+2*(fruit.getRadius()));
 			fallingDownFruitsList.add(fruitBounds);
 		}
 	}
@@ -132,10 +131,6 @@ public class CatchGameView extends View {
 		if(CatchGameActivity.game != null) {
 			if(CatchGameActivity.game.lose()) {
 				stopTimer();
-		//		Toast.makeText((Activity)getContext(), 
-			//			"The game has finished, you have catched " + 
-				//			// TODO		CatchGameActivity.basket.getNbFruits() +
-					//	" fruits", Toast.LENGTH_SHORT).show();
 			} else {
 			//	canvas.drawText("Basket: " + CatchGameActivity.basket.getNbFruits(), 
 			//			CatchGameActivity.basket.getLocationInScreen().y, 

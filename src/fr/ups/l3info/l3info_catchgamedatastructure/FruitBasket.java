@@ -9,17 +9,16 @@ import java.util.List;
  * To be completed to implement your own version of the game
  */
 public class FruitBasket {
-	private List<Fruit> fruits; // How big is the basket
-	
+	private int nbFruits;
 	public FruitBasket(){
-		fruits = new ArrayList<Fruit>();
+		nbFruits = 0;
 	}
 	
 	public void addFruit() {
-		fruits.add(new Fruit());
+		++nbFruits;
 	}
 	
 	public int getNbFruits() {
-		return fruits.size();
+		return nbFruits;
 	}
 }
