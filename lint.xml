@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="InlinedApi">
+        <ignore path="src/fr/ups/l3info/l3info_catchgamedatastructure/Parameters.java" />
+        <ignore path="src/fr/ups/l3info/utils/Parameters.java" />
+    </issue>
+    <issue id="UseValueOf">
+        <ignore path="src/fr/ups/l3info/utils/Parameters.java" />
+    </issue>
+</lint>

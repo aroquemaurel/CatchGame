@@ -7,7 +7,6 @@ import android.graphics.Point;
  * Can be modified to implement your own version of the game
  */
 public class Fruit {
-
 	private Point locationInScreen; //Where the fruit is located
 	private int radius; // How big is the fruit
 	
@@ -16,6 +15,10 @@ public class Fruit {
 		radius = rad;
 	}
 	
+	public Fruit() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void setLocation(Point p){
 		locationInScreen = p;
 	}
