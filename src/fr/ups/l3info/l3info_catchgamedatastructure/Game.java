@@ -28,8 +28,13 @@ public class Game {
 	public int fruitSize;
 	public int simultFruitNumber;
 	
+	private boolean isStarted;
+	private boolean isPaused;
+	
 	private Game() {
 		majParameters();
+		isStarted = false;
+		isPaused = false;
 		fruitBasket = new FruitBasket();
 		_timer = new TimerGame();
 	}
@@ -51,8 +56,11 @@ public class Game {
 	 * @param t Timer avec fonction de callback
 	 */
 	public void start(ITimer t) {
-		majParameters();
-
+		if(!isPaused) {
+			majParameters();
+			isStarted = true;
+		}
+		isPaused = false;
 		_timer.start(t, fruitFallDelay);
 	}
 	
@@ -61,7 +69,10 @@ public class Game {
 	 */
 	public void finish() {
 		_timer.stop();
+		isStarted = false;
+		isPaused = false;
 		Parameters.getInstance().put("bestScore", fruitBasket.getBestScore());
+		Parameters.getInstance().commit();
 		_instance = null;
 	}
 	
@@ -81,14 +92,7 @@ public class Game {
 		fruitFallDelay = (100-Parameters.getInstance().get("fruitSpeed", 50))-10;
 		int param = Parameters.getInstance().get("fruitSize", 1);
 		
-		if (param <= 40) {
-			fruitSize = 1;
-		} else if(param > 40 && param <= 70) {
-			fruitSize = 2;
-		} else {
-			fruitSize = 3;
-		}
-		
+		fruitSize = Parameters.getInstance().get("fruitSize", 1);
 		appearSpeed = Parameters.getInstance().get("fruitNumbers", 30);
 		fruitLimit = Parameters.getInstance().get("fruitLimit", 3);
 		fruitFallDelay = (fruitFallDelay > 0) ? fruitFallDelay : 1;
@@ -153,5 +157,15 @@ public class Game {
 	 */
 	public int getNbRestantLives() {
 		return fruitLimit-gameOver;
+	}
+
+	public boolean isStarted() {
+		return isStarted;
+	}
+
+	public void pause() {
+		isPaused = true;
+		_timer.cancel();
+		_timer = new TimerGame();
 	}
 }

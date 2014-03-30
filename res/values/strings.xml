@@ -23,4 +23,13 @@
 		<item >4</item>
 		<item >5</item>
 	</string-array>
+	<string name="loseGame">You lose the game !</string>
+	<string name="loseGameTitle">Lose</string>
+	<string name="ok">ok</string>
+	<string-array name="arrayFruitsSize">
+		<item >Normal</item>
+		<item >Big</item>
+		<item >Huge</item>
+	</string-array>
+	<string name="pause">Pause</string>
 </resources>

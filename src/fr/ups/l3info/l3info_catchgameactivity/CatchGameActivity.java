@@ -23,6 +23,7 @@ public class CatchGameActivity extends Activity {
 	private CatchGameView fruitView;
 	private Button bStart;
 	private Button bStop;
+	private Button bPause;
 	static TextView labelNbFruits;
 	static TextView labelBestScore;
 	
@@ -39,8 +40,11 @@ public class CatchGameActivity extends Activity {
 		bStart = (Button) findViewById(R.id.buttonStart);
 		bStop = (Button) findViewById(R.id.buttonStop);
 		bStop.setEnabled(false);
+		bPause = (Button)findViewById(R.id.buttonPause);
+		bPause.setEnabled(false);
 		labelBestScore = (TextView)findViewById(R.id.textView2);
 		labelNbFruits = (TextView)findViewById(R.id.textView1);
+		
 		bStart.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -53,20 +57,36 @@ public class CatchGameActivity extends Activity {
 				buttonStopClickEventHandler();
 			}
 		});
+		
+		bPause.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				buttonPauseClickEventHandler();
+			}
+		});
+
 	}
 
 	private void buttonStartClickEventHandler() {
 		Game.getInstance().start(fruitView);
 		bStop.setEnabled(true);
 		bStart.setEnabled(false);
+		bPause.setEnabled(true);
 	}
 	
 	private void buttonStopClickEventHandler() {
 		fruitView.endGame();
 		bStart.setEnabled(true);
 		bStop.setEnabled(false);
+		bPause.setEnabled(false);
 	}
 
+	private void buttonPauseClickEventHandler() {
+		fruitView.pauseGame();
+		bStart.setEnabled(true);
+		bStop.setEnabled(true);
+		bPause.setEnabled(false);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to thfe action bar if it is present.

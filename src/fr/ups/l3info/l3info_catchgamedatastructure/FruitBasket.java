@@ -13,7 +13,7 @@ public class FruitBasket {
 	private int bestScore;
 	private int nbFruits;
 	
-	public FruitBasket(){
+	public FruitBasket() {
 		score = 0;
 		nbFruits = 0;
 		bestScore = Parameters.getInstance().get("bestScore", 0);

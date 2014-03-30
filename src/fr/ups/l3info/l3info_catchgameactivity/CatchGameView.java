@@ -7,7 +7,10 @@ import java.util.List;
 
 import android.R.color;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,6 +19,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import fr.ups.l3info.l3info_catchgamedatastructure.Game;
 import fr.ups.l3info.l3info_catchgametemplate.R;
 import fr.ups.l3info.utils.ITimer;
@@ -105,6 +109,7 @@ public class CatchGameView extends View implements ITimer {
 		canvas.drawColor(color.holo_green_dark);
 		
 		if(Game.getInstance().lose()) {
+			displayEndGamePopup();
 			endGame();
 		} else {
 			writeInfos(canvas);
@@ -124,19 +129,48 @@ public class CatchGameView extends View implements ITimer {
 	 * @param canvas Canvas
 	 */
 	private void writeInfos(Canvas canvas) {
-		canvas.drawText("Score: " + Game.getInstance().fruitBasket.getScore(), 5, 10, _paint);
-		canvas.drawText("Best score: " + Game.getInstance().fruitBasket.getBestScore(), 5, 30, _paint);	
-		canvas.drawText("Nb of lives: " + Game.getInstance().fruitLimit, 5, 50, _paint);	
+		if(Game.getInstance().isStarted()) {
+			canvas.drawText("Score: " + Game.getInstance().fruitBasket.getScore(), 5, 10, _paint);
+			canvas.drawText("Best score: " + Game.getInstance().fruitBasket.getBestScore(), 5, 30, _paint);	
+			canvas.drawText("Nb of lives: " + Game.getInstance().getNbRestantLives(), 5, 50, _paint);
+		}
 	}
 
+	/**
+	 * Affiche une popup de fin de jeu
+	 */
+	public void displayEndGamePopup() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setMessage(R.string.loseGame).setTitle(R.string.loseGameTitle);
+		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+	           public void onClick(DialogInterface dialog, int id) {
+	               dialog.cancel();
+	           }
+	       });
+
+		AlertDialog dialog = builder.create();
+		dialog.show();
+
+	}
 	/**
 	 * Termine le jeu
 	 */
 	public void endGame() {
 		fallingDownFruitsList.clear();
 		Game.getInstance().finish();
+		((Button)(((Activity) getContext()).findViewById(R.id.buttonStart))).setEnabled(true);
+		((Button)(((Activity) getContext()).findViewById(R.id.buttonStop))).setEnabled(false);
+		((Button)(((Activity) getContext()).findViewById(R.id.buttonPause))).setEnabled(false);
+
 	}
 	
+	/**
+	 * Met le jeu en pause
+	 */
+	public void pauseGame() {
+		Game.getInstance().pause();
+	}
+
 	/**
 	 * Lors que le joueur touche l'écran
 	 */
