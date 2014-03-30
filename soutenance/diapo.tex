@@ -51,8 +51,8 @@
 {Développement d'une application Android}
 \subtitle {CatchGame}
 
-\author[\bsc{Roquemaurel}\newline\bsc{Valleix}] % (facultatif, à utiliser seulement avec plusieurs auteurs)
-{Antoine de \bsc{Roquemaurel}\newline Fabrice \bsc{Valleix}}
+\author[\bsc{Roquemaurel}\newline\bsc{Melnychuk}] % (facultatif, à utiliser seulement avec plusieurs auteurs)
+{Antoine de \bsc{Roquemaurel}\newline Annia \bsc{Melnychuk}}
 
 % - Composez les noms dans l'ordre dans lequel ils apparaîtrons dans l'article
 % - Utilisez la commande \inst{?} uniquement si les auteurs ont des affiliations
@@ -67,8 +67,8 @@
 % - Utilisez la commande \inst uniquement s'il y a plusieurs affectations
 % - Faîtes quelque chose de simple, personne ne s'intéresse à votre adresse
 
-\date[ ~ ~ ~ 22 / 05 / 2013] % (facultatif, peut être une abréviation du nom de la conférence)
-{22 / 05 / 2013}
+\date[ ~ ~ ~ 29 / 03 / 2014] % (facultatif, peut être une abréviation du nom de la conférence)
+{29 / 03 / 2014}
 % - Utilisez à la fois le nom de la conférence et son abréviation.
 % - N'a pas réellement d'importance pour l'assistance qui sera présente lors de la conférence,
 %   mais en a surtout pour les personnes (y compris vous-même) qui liront les transparents en ligne.
@@ -140,6 +140,7 @@
 		\begin{block}{Gameplay}
 			\begin{itemize}
 				\item Tombée des fruits
+				\item Accélération progressive des pommes
 				\item Calcul de score
 				\item Disparition des fruits une fois cueillis
 				\item Mémorisation du meilleur score
@@ -148,28 +149,54 @@
 		\pause
 		\begin{block}{Paramétrage}
 			\begin{itemize}
-				\item Changement de la vitesse
-				\item Changement de la taille des fruits
+				\item Changement de la vitesse initiale
 				\item Changement du nombre de fruits
 				\item Changement du nombre de vies 
 			\end{itemize}
 		\end{block}
 	\end{frame}
+\section{Problèmes rencontrés}
 	\begin{frame}{Problèmes rencontrés}
 		\begin{tabular}{p{4.5cm} p{4.5cm}}
 			\textbf{Problèmes} &\textbf{Solution}\\
-			Problème de repeinture de l'écran. Les fruits tombaient seulement quand on appuyait sur un boutton. & 
-			Appel de la fonction \texttt{invalidate()} à la fin de la fonction \texttt{onDraw()} afin de repeindre le canevas de manière
-			régulière.\vspace{7px}\\
 			\hline
-			\vspace{7px}
-			Problème lié à la << cueillette >> &\vspace{7px} Recalcule et changement des bornes de chaque fruit (liste de Rect).
+			Problème de repeinture de l'écran. & 
+			Appel de la fonction \texttt{invalidate()}\\
+			&\\
+			&\\
+			Problème lié à la << cueillette >> & Recalcule et changement des bornes de chaque fruit (liste de Rect).\\
+			&\\
+			&\\
+			Exception aléatoire lors de la << cueillette >> & Débuggage minutieux\\
 		\end{tabular}
 	\end{frame}
 
-\section{Problèmes rencontrés}
 \section{Démonstration}
+\begin{frame}{Captures d'écran}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=4cm]{screens/2.png}~
+		\includegraphics[width=4cm]{screens/1.png} 
+
+		\caption{Captures d'écran de l'application}
+	\end{figure}
+\end{frame}
 
 \section*{Conclusion}
+\begin{frame}{Conclusion}
+	\begin{itemize}
+		\item Projet instructif
+			\begin{itemize}
+				\item Sdk android : activity, widgets, \ldots
+				\item Événements 
+				\item \ldots
+			\end{itemize}
+	\end{itemize}
+	\vfill
+	\begin{block}{Remarques générales}
+		Prise en main assez difficile, mais une fois les concepts principaux assimilés, le projet n'était pas très difficile
+	\end{block}
+
+\end{frame}
 \end{document}
 

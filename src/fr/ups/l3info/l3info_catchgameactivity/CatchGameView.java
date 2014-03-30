@@ -1,12 +1,12 @@
 package fr.ups.l3info.l3info_catchgameactivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.R.color;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,138 +14,132 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import fr.ups.l3info.l3info_catchgamedatastructure.Fruit;
+import fr.ups.l3info.l3info_catchgamedatastructure.Game;
 import fr.ups.l3info.l3info_catchgametemplate.R;
+import fr.ups.l3info.utils.ITimer;
 
 /* 
  * Custom view for displaying falling fruits
  * Comments to be added
  * To be modified to implement your own version of the game
  */
-public class CatchGameView extends View {
-	private int endEcran = 630; //sur ma tablette
-	private int timerCount = 0;
-	private int gameField = 300;
+@SuppressLint("NewApi")
+public class CatchGameView extends View implements ITimer {
+	public final static int END_ECRAN = 630; //sur ma tablette
+	public final static int GAME_FIELD = 300;
+	public final static int FRUIT_RADIUS = 22;
+
 	private float pressedPositionX = -1;
 	private float pressedPositionY = -1;
 	private List<Rect> fallingDownFruitsList;
 	private Bitmap applePict;
-	private Timer timerFallingFruits;
+	private Bitmap _newApple;
+	private Paint _paint;
+
 	
 	public CatchGameView(Context context) {
 		super(context);
-		applePict = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
-		fallingDownFruitsList = new ArrayList<Rect>();
+		initAttributes();
 	}
 	
 	public CatchGameView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		applePict = BitmapFactory.decodeResource(getResources(), R.drawable.apple);
-		fallingDownFruitsList = new ArrayList<Rect>();
+		initAttributes();
 	}
 	
 	public CatchGameView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		initAttributes();
+	}
+
+	/**
+	 * Initialise les attributs
+	 */
+	private void initAttributes() {
+		_paint = new Paint();
 		applePict = BitmapFactory.decodeResource(getResources(), R.drawable.apple);
-		fallingDownFruitsList = new ArrayList<Rect>();
+		fallingDownFruitsList = Collections.synchronizedList(new ArrayList<Rect>());
 	}	
 	
-	public void initTimer() {
-		timerFallingFruits = new Timer();
-		timerFallingFruits.schedule(new TimerTask() {			
-			@Override
-			public void run() {
-				timerEventHandler();
-			}
-			
-		}, 0, CatchGameActivity.game.getFruitFallDelay());
-	}
 	
-	public void stopTimer() {
-		timerFallingFruits.cancel();
-	}
-	 
-	private void timerEventHandler() {
-		Rect toMemorise = null;
+	/**
+	 * Fonction de callback du timer
+	 */
+	@Override
+	public void timerEventHandler() {
+		_newApple = Bitmap.createScaledBitmap(applePict, applePict.getWidth()*Game.getInstance().getFruitSize(), 
+											  applePict.getHeight()*Game.getInstance().getFruitSize(), false);
+		Game.getInstance().addApple(fallingDownFruitsList);
+		Game.getInstance().quickly(this);
 
-		if (timerCount % CatchGameActivity.game.getAppearSpeed() == 0) {
-			Random rand = new Random();
-			int coord1 = rand.nextInt(gameField);
-			fallingDownFruitsList.add(new Rect(0, coord1, CatchGameActivity.fruitRadius*2, 
-														coord1+CatchGameActivity.fruitRadius*2));
-		}
-		if (timerCount % 50 == 0) {
-			// TODO speed add
-			timerCount = 0;
-			Log.i("test", "test");
-		}
-		for (Rect fruitBounds : fallingDownFruitsList) {
-			if(fruitBounds.left >= endEcran) {
-				toMemorise = fruitBounds;
-				CatchGameActivity.game.losingFruit();
-			} else {
-				if (fruitBounds.contains((int)pressedPositionY,(int) pressedPositionX)) {
-					Log.i("test", "rtuc");
-					toMemorise = fruitBounds;
-					CatchGameActivity.basket.addFruit();
+		synchronized (fallingDownFruitsList) {
+			Iterator<Rect> it = fallingDownFruitsList.iterator();
+			Rect fruitBounds;
+			while(it.hasNext()) {
+				fruitBounds = it.next();
+				if(fruitBounds.left >= END_ECRAN) {
+					Game.getInstance().losingFruit();
+					it.remove();
+				} else {
+					if (fruitBounds.contains((int)pressedPositionY,(int) pressedPositionX)) {
+						it.remove();
+						Game.getInstance().fruitBasket.addFruit(Game.getInstance().getLevel());
+					}
+					fruitBounds.set(fruitBounds.left+2, fruitBounds.top, fruitBounds.right+2, fruitBounds.bottom);
 				}
-				fruitBounds.set(fruitBounds.left+2, fruitBounds.top, fruitBounds.right+2, fruitBounds.bottom);
 			}
-	
 		}
 		
-		if (toMemorise != null) {
-			fallingDownFruitsList.remove(toMemorise);
-		}
-		
-		timerCount++;
 		pressedPositionX = -1;
 		pressedPositionY = -1;
 	}
 	
-	public void setFruitFallDelay(int delay) {
-//		fruitFallDelay = delay;
-	}
 	
-	public void setFruitList(List<Fruit> fruitList){
-		Rect fruitBounds;
-		fallingDownFruitsList.clear();
-		for (Fruit fruit:fruitList){
-			
-			fruitBounds = new Rect(fruit.getLocationInScreen().x, 
-					fruit.getLocationInScreen().y, fruit.getLocationInScreen().x+2*(fruit.getRadius()), fruit.getLocationInScreen().y+2*(fruit.getRadius()));
-			fallingDownFruitsList.add(fruitBounds);
-		}
-	}
-	
-	
+	/**
+	 * À chaque repeinture de l'écran
+	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
 		canvas.drawColor(color.holo_green_dark);
-		Paint p = new Paint();
-
-		if(CatchGameActivity.game != null) {
-			if(CatchGameActivity.game.lose()) {
-				stopTimer();
-			} else {
-			//	canvas.drawText("Basket: " + CatchGameActivity.basket.getNbFruits(), 
-			//			CatchGameActivity.basket.getLocationInScreen().y, 
-				//		CatchGameActivity.basket.getLocationInScreen().x, p);
-			//	CatchGameActivity.labelNbFruits.setText("Numbers of fruits: ");
-				
-				for (Rect fruitBounds:fallingDownFruitsList){
-					canvas.drawBitmap(applePict, fruitBounds.top, fruitBounds.left,null);
+		
+		if(Game.getInstance().lose()) {
+			endGame();
+		} else {
+			writeInfos(canvas);
+			synchronized (fallingDownFruitsList) {
+				for (Rect fruitBounds : fallingDownFruitsList) {
+					canvas.drawBitmap(_newApple, fruitBounds.top, fruitBounds.left,null);
 				}
 			}
 		}
 		
 		invalidate();
+		super.onDraw(canvas);
 	}
 	
+	/**
+	 * Écris les informations du jeu en haut de l'écran
+	 * @param canvas Canvas
+	 */
+	private void writeInfos(Canvas canvas) {
+		canvas.drawText("Score: " + Game.getInstance().fruitBasket.getScore(), 5, 10, _paint);
+		canvas.drawText("Best score: " + Game.getInstance().fruitBasket.getBestScore(), 5, 30, _paint);	
+		canvas.drawText("Nb of lives: " + Game.getInstance().fruitLimit, 5, 50, _paint);	
+	}
+
+	/**
+	 * Termine le jeu
+	 */
+	public void endGame() {
+		fallingDownFruitsList.clear();
+		Game.getInstance().finish();
+	}
+	
+	/**
+	 * Lors que le joueur touche l'écran
+	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
 	    pressedPositionX = e.getX();

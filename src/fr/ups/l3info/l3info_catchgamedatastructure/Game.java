@@ -1,71 +1,157 @@
 package fr.ups.l3info.l3info_catchgamedatastructure;
 
+import java.util.List;
+import java.util.Random;
+
+import android.graphics.Rect;
+import fr.ups.l3info.l3info_catchgameactivity.CatchGameActivity;
+import fr.ups.l3info.l3info_catchgameactivity.CatchGameView;
+import fr.ups.l3info.l3info_catchgameactivity.TimerGame;
+import fr.ups.l3info.utils.ITimer;
 import fr.ups.l3info.utils.Parameters;
 
+/**
+ * Gestion du jeu 
+ *
+ */
 public class Game {
+	private static Game _instance;
+
 	private int fruitFallDelay;
-	private int fruitLimit;//fruits can fall without being picked up
 	private int gameOver;
-	private FruitBasket fruitBasket;
 	private int appearSpeed;
+	private int level;
+	private TimerGame _timer;
 	
-	public Game() {
+	public FruitBasket fruitBasket;
+	public int fruitLimit;//fruits can fall without being picked up
+	public int fruitSize;
+	public int simultFruitNumber;
+	
+	private Game() {
 		majParameters();
-		fruitLimit = 1;
-		gameOver = 0;
 		fruitBasket = new FruitBasket();
-	}
-	public void start() {
-		gameOver = 0; 
+		_timer = new TimerGame();
 	}
 	
-	public void stop() {
+	/**
+	 * 
+	 * @return L'instance de Jeu
+	 */
+	public static Game getInstance() {
+		if(_instance == null) {
+			_instance = new Game();
+		} 
 		
+		return _instance;
 	}
 
-	public int getFruitFallDelay() {
-		return fruitFallDelay;
-	}
+	/**
+	 * Démarre le jeu
+	 * @param t Timer avec fonction de callback
+	 */
+	public void start(ITimer t) {
+		majParameters();
 
-	public void setFruitFallDelay(int fruitFallDelay) {
-		this.fruitFallDelay = fruitFallDelay;
-	}
-
-	public int getFruitLimit() {
-		return fruitLimit;
-	}
-
-	public void setFruitLimit(int fruitLimit) {
-		this.fruitLimit = fruitLimit;
-	}
-
-	public int getGameOver() {
-		return gameOver;
+		_timer.start(t, fruitFallDelay);
 	}
 	
-	public FruitBasket getFruitBasket() {
-		return fruitBasket;
-	}
-
-	public void setGameOver(int gameOver) {
-		this.gameOver = gameOver;
+	/** 
+	 * Termine le jeu
+	 */
+	public void finish() {
+		_timer.stop();
+		Parameters.getInstance().put("bestScore", fruitBasket.getBestScore());
+		_instance = null;
 	}
 	
+	/**
+	 * Est-ce qu'on a perdu ?
+	 * @return Vrai si le jeu est perdu
+	 */
 	public boolean lose() {
+		System.out.println(gameOver + " "+fruitLimit);
 		return gameOver >= fruitLimit;
 	}
 	
+	/**
+	 * Met à jour les paramètres
+	 */
 	public void majParameters() {
-		fruitFallDelay = (100-Parameters.getInstance().get("fruitSpeed", 50))-20;
+		fruitFallDelay = (100-Parameters.getInstance().get("fruitSpeed", 50))-10;
+		int param = Parameters.getInstance().get("fruitSize", 1);
+		
+		if (param <= 40) {
+			fruitSize = 1;
+		} else if(param > 40 && param <= 70) {
+			fruitSize = 2;
+		} else {
+			fruitSize = 3;
+		}
+		
+		appearSpeed = Parameters.getInstance().get("fruitNumbers", 30);
+		fruitLimit = Parameters.getInstance().get("fruitLimit", 3);
 		fruitFallDelay = (fruitFallDelay > 0) ? fruitFallDelay : 1;
-		appearSpeed = 20;
+		level = 1;
+		gameOver = 0; 
 	}
 
+	/**
+	 * Perte d'un fruit :(
+	 */
 	public void losingFruit() {
 		++gameOver;
 	}
 	
-	public int getAppearSpeed() {
-		return appearSpeed;
+	/**
+	 * Retourne la taille du fruit
+	 * @return La taille
+	 */
+	public int getFruitSize() {
+		return fruitSize;
+	}
+
+	/** 
+	 * Accélère la tombée des fruits si besoin
+	 */
+	public void quickly(ITimer t) {
+		if (_timer.getTimerCount() % 200 == 0) {
+			_timer.stop();
+			_timer.initTimerCount();
+			fruitFallDelay -= 5 ;
+			fruitFallDelay = (fruitFallDelay >= 10) ? fruitFallDelay : 10;
+			++level;
+			_timer = new TimerGame();
+			_timer.start(t, fruitFallDelay);
+		}
+	}
+	
+	/**
+	 * Retourne le niveau de difficulté
+	 * @return Le niveau
+	 */
+	public int getLevel() {
+		return level;
+	}
+	
+	/**
+	 * Ajoute une pomme si besoin
+	 * @param fallingDownFruitsList La liste des pommes
+	 */
+	public void addApple(List<Rect> fallingDownFruitsList) {
+		if (_timer.getTimerCount() % appearSpeed == 0) {
+			Random rand = new Random();
+			int coord1 = rand.nextInt(CatchGameView.GAME_FIELD);
+			fallingDownFruitsList.add(new Rect(0, coord1, fruitSize*CatchGameView.FRUIT_RADIUS*2, 
+													coord1+fruitSize*CatchGameView.FRUIT_RADIUS*2));							
+		}	
+	}
+	
+	/**
+	 * Retourne le nombre de vies restantes
+	 * @return le nombre de vie
+	 */
+	public int getNbRestantLives() {
+		return fruitLimit-gameOver;
 	}
 }
