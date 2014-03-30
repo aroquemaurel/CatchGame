@@ -27,10 +27,9 @@ public class CatchGameActivity extends Activity {
 	static TextView labelNbFruits;
 	static TextView labelBestScore;
 	
-	public static void updateScore() {
-		labelNbFruits.setText("coucou");
-	}
-	
+	/**
+	 * Création de l'activity
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,6 +65,9 @@ public class CatchGameActivity extends Activity {
 
 	}
 
+	/**
+	 * Button start
+	 */
 	private void buttonStartClickEventHandler() {
 		Game.getInstance().start(fruitView);
 		bStop.setEnabled(true);
@@ -73,6 +75,9 @@ public class CatchGameActivity extends Activity {
 		bPause.setEnabled(true);
 	}
 	
+	/**
+	 * Bouton stop
+	 */
 	private void buttonStopClickEventHandler() {
 		fruitView.endGame();
 		bStart.setEnabled(true);
@@ -80,6 +85,9 @@ public class CatchGameActivity extends Activity {
 		bPause.setEnabled(false);
 	}
 
+	/**
+	 * Bouton pause
+	 */
 	private void buttonPauseClickEventHandler() {
 		fruitView.pauseGame();
 		bStart.setEnabled(true);
@@ -87,6 +95,9 @@ public class CatchGameActivity extends Activity {
 		bPause.setEnabled(false);
 	}
 	
+	/**
+	 * Création du menu pour les paramètres
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to thfe action bar if it is present.
@@ -94,12 +105,18 @@ public class CatchGameActivity extends Activity {
 		return true;
 	}
 
+	/**
+	 * Action paramètre
+	 * @param i Item du menu
+	 */
 	public void action_settings(MenuItem i) {
 		// Activity is started with requestCode 2
 		startActivityForResult(new Intent(CatchGameActivity.this, SettingsActivity.class), 2);
 	}
 
-	// Call Back method to get the Message form other Activity
+	/**
+	 *  Call Back method to get the Message form other Activity
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
